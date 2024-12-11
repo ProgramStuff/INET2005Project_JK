@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PostCategoryController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,10 @@ Route::get('/categories/create', function () {
     return Inertia::render('CreateCategory');
 });
 
+// Route::get(`/categories/$id/edit`, function () {
+//     return Inertia::render('CreateCategory');
+// });
+
 Route::get('/items/create', function () {
     return Inertia::render('CreateItem');
 }); 
@@ -39,5 +44,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+
+// Category Routes
+Route::post('categories/catCreate', [PostCategoryController::class, 'createCategory']);
+Route::post(`categories/{id}/edit`, [PostCategoryController::class, 'editCatById']);
+Route::get('categories/allCategories', [PostCategoryController::class, 'getAllCategories']);
+
+
 
 require __DIR__.'/auth.php';

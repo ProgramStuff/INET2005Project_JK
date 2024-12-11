@@ -21,28 +21,26 @@ const defaultTheme = createTheme({
 });
 
 export default function CreateCategory() {
-//   const context = useOutletContext()
-
   // Manage state  
   const [name, setName] = useState("");
-  const [category, setCategory] = useState("");
-//   const navigate = useNavigate();
+  const [catError, setCatError] = useState("");
+
 
   async function handleSubmit(event) {
     event.preventDefault();
     try {
       // Hit server login end point
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, { email, password });
+      const response = await axios.post(`catCreate`, { name });
+      
 
       if (response.status === 200) {
-        console.log("Login successful");
-       !context.user && context.loginUser(response.data.id, response.data.userName, response.data.role);
-        navigate('/')
-      } else {
-        console.log("Unexpected response:", response);
+        window.location='/categories';
       }
     } catch (error) {
-      console.error("Login failed:", error);
+      if (error.status === 422){
+        setCatError(`${name} category already exists`);
+      }
+      console.error("Add category failed:", error);
     }
   }
 
@@ -76,38 +74,20 @@ export default function CreateCategory() {
               autoFocus
               onChange={(e) => setName(e.target.value)}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="category"
-              label="category"
-              type="text"
-              id="category"
-              onChange={(e) => setCategory(e.target.value)}
-            />
+        
+            
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              onClick={handleSubmit}
             >
               Create
             </Button>
-            <Grid container>
-              <Grid item xs>
-                {/* <Link href="#" variant="body2">
-                  Forgot password?
-                </Link> */}
-              </Grid>
-              <Grid item>
-                {/* <Typography variant="body2">
-                  <Link to="/Register">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Typography> */}
-              </Grid>
-            </Grid>
+            {catError && <p style={{ color: 'red', marginTop: '1rem' }}>{catError}</p>}
+          
           </Box>
         </Box>
         <Footer sx={{mt: {xs: 10, sm: 10, md: '27vh', lg: '27vh'}}} />
