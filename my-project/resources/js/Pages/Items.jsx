@@ -14,6 +14,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Footer from '../components/Footer';
 import Paper from '@mui/material/Paper';
 import axios, { all } from 'axios';
+import { Link } from '@inertiajs/react';
+
 
 const defaultTheme = createTheme({
   palette: {
@@ -24,6 +26,7 @@ const defaultTheme = createTheme({
 export default function Items() {
 
   const [itemData, setItemData] = useState([{"" : ""}]);
+  const [itemDeleted, setItemDeleted] = useState(0);
     
 
     // allItems.map((cat) => {
@@ -51,32 +54,25 @@ export default function Items() {
   //   }
   // }
 
-  // async function handleClick(event) {
-  //   // Send confirmed role to update endpoint
-  //   event.preventDefault();
-  //   const userid = userRole.userid
-  //   const role = userRole.role
-  //   try {
-  //     // Hit role insert end point
-  //     const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/role/update`, {userid: userid, role: role});
-  //     if (response.status === 200) {
-  //       console.log("Request successful");
-  //     } else {
-  //       console.log("Unexpected response:", response);
-  //     }
-  //   } catch (error) {
-  //     console.error("Request failed:", error);
-  //   }
+  async function handleDelete(event) {
+    const id = event.target.value;
 
-  // }
+    try {
+      const response = await axios.post(`/items/deleteItem`, { id });
+      if (response.status === 200) {
+        setItemDeleted((prevCount) => prevCount + 1);
+      }
+    } catch (error) {
+      console.error("Delete item failed failed:", error);
+    }
+    console.log(response);
+  }
 
   async function loadItems() {
     try {
       const response = await axios.get(`/items/allItems`);
       if (response.status === 200) {
         setItemData(response.data);
-        console.log(response.data);
-        console.log(itemData)
       }
     } catch (error) {
       console.error("Fetch categories failed:", error);
@@ -85,7 +81,7 @@ export default function Items() {
 
   useEffect(() => {
     loadItems();
-  }, [])
+  }, [itemDeleted])
 
 
   
@@ -146,6 +142,7 @@ export default function Items() {
 
                          itemData.map((item, index) => { 
                              return(
+                              item.created_at == 0 ? null :
                             <TableRow
                             key={item.id}
                           >
@@ -185,13 +182,17 @@ export default function Items() {
 
                             <TableCell align="left">
                                 {/* Button will redirect to that category to edit */}
-                            <Button value={item.id} onClick={(e) => console.log(e.currentTarget.value)}>Edit</Button>
+                              <Link href={`/items/${item.id}/edit`}>
+                                <Button>Edit</Button>
+                              </Link>
+                            {/* <Button value={item.id} onClick={(e) => console.log(e.currentTarget.value)}>Edit</Button> */}
                             </TableCell>
 
                             <>              
                             <TableCell align="left">
                                 {/* Button will redirect to that category to edit */}
-                            <Button value={item.id} onClick={(e) => console.log(e.currentTarget.value)}>Delete</Button>
+                            <Button value={item.id} onClick={(e) => {handleDelete(e);
+                            }}>Delete</Button>
                             </TableCell>
                             </>
             

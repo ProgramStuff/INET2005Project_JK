@@ -16,6 +16,8 @@ Route::get('/', function () {
     ]);
 });
 
+// Categories
+
 Route::get('/categories', function () {
     return Inertia::render('Categories');
 });
@@ -26,6 +28,12 @@ Route::get('/categories/create', function () {
 
 Route::get('/categories/{id}/edit', function ($id) {
     return Inertia::render('EditCategory', ['categoryId' => $id]);
+});
+
+// ITEMS
+
+Route::get('/items/{id}/edit', function ($id) {
+    return Inertia::render('EditItem', ['itemId' => $id]);
 });
 
 Route::get('/items/create', function () {
@@ -57,6 +65,9 @@ Route::post('categories/updateCategory/{id}', [PostCategoryController::class, 'u
 // Item routes
 Route::post('items/createItem', [ItemController::class , 'createItem']);
 Route::get('items/allItems', [ItemController::class, 'getAllItems']);
+Route::post('items/deleteItem', [ItemController::class , 'softDeleteItem']);
+Route::get('categories/edit/{id}', [ItemController::class, 'getItemById']);
+Route::post('categories/updateCategory/{id}', [ItemController::class, 'updateItem']);
 
 
 require __DIR__.'/auth.php';
