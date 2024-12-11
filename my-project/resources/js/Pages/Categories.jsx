@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -25,19 +25,12 @@ const defaultTheme = createTheme({
 export default function Categories() {
 
   // Manage state  
-    const [categories, setCategories] = useState([]);
+    const [categoriesData, setCategoriesData] = useState([{"" : ""}]);
     const allCategories = [
         { id: 1, title: "Category One" },
         { id: 2, title: "Category Two" }
     ];
-    
-
-    // allCategories.map((cat) => {
-    //     let newCat = {id: cat.id, title: cat.title}
-    //     setCategories(prevCats => {
-    //       return [...prevCats, newCat];
-    //     });
-    //   });
+  
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -56,25 +49,22 @@ export default function Categories() {
       console.error("Login failed:", error);
     }
   }
-
-  async function handleClick(event) {
-    // Send confirmed role to update endpoint
-    event.preventDefault();
-    const userid = userRole.userid
-    const role = userRole.role
+  async function loadCategories() {
     try {
-      // Hit role insert end point
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/role/update`, {userid: userid, role: role});
+      const response = await axios.get(`categories/allCategories`);
       if (response.status === 200) {
-        console.log("Request successful");
-      } else {
-        console.log("Unexpected response:", response);
+        setCategoriesData(response.data);
+        console.log(response.data[0]);
+        console.log(categoriesData)
       }
     } catch (error) {
-      console.error("Request failed:", error);
+      console.error("Fetch categories failed:", error);
     }
-
   }
+
+  useEffect(() => {
+    loadCategories();
+  }, [])
 
 
   
@@ -105,7 +95,8 @@ export default function Categories() {
           <Typography component="h1" variant="h5">
             All Categories
           </Typography>
-            {/* {allCategories == "" ? null :  */}
+
+            {categoriesData == "" ? null : 
               <FormControl sx={{ width: '100%', mt: { xs: 3, sm: 4, md: 5 } }}>
                 <RadioGroup sx={{ padding: 0, margin: 0, width: '100%' }}>
                   <TableContainer sx={{
@@ -125,24 +116,24 @@ export default function Categories() {
                       </TableHead>
                       <TableBody sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                         {/* Map though role and display them in a table with user names to confirm */}
-                         {allCategories.map((cat, index) => { 
+                         {categoriesData.map((cat, index) => { 
+                          {console.log(cat.id)}
                              return(
                             <TableRow
                             key={cat.id}
                           >
                             <TableCell component="th" scope="row">
-                              {cat.title}
+                              {cat.name}
                             </TableCell>
 
                             <TableCell align="right">
                                 {/* Set the radio button selected as default */}
-                                {/* TODO: Might have to change this when there is multiple. May edit every single cat */}
-                            <FormControlLabel value={`${cat.id}:${cat.title}`} control={<Radio sx={{display: 'none'}} />} label={cat.title}/>
+                            <FormControlLabel value={`${cat.id}:${cat.name}`} control={<Radio sx={{display: 'none'}} />} label={cat.id}/>
                             </TableCell>
                             <>              
                             <TableCell align="right">
                                 {/* Button will redirect to that category to edit */}
-                            <Button value={cat.id} onClick={(e) => console.log(e.currentTarget.value)}>Edit</Button>
+                            <Button value={cat.id} onClick={(e) => window.location=`/categories/${cat.id}/edit`}>Edit</Button>
                             </TableCell>
                             </>
             
@@ -154,7 +145,7 @@ export default function Categories() {
                   </TableContainer>
                 </RadioGroup>
               </FormControl>
-            {/* } */}
+            } 
           </Box>
         <Footer sx={{mt: {xs: 10, sm: 10, md: '27vh', lg: '27vh'}}} />
       </Container>
