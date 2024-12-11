@@ -23,9 +23,9 @@ Route::get('/categories/create', function () {
     return Inertia::render('CreateCategory');
 });
 
-// Route::get(`/categories/$id/edit`, function () {
-//     return Inertia::render('CreateCategory');
-// });
+Route::get('/categories/{id}/edit', function ($id) {
+    return Inertia::render('EditCategory', ['categoryId' => $id]);
+});
 
 Route::get('/items/create', function () {
     return Inertia::render('CreateItem');
@@ -48,8 +48,9 @@ Route::middleware('auth')->group(function () {
 
 // Category Routes
 Route::post('categories/catCreate', [PostCategoryController::class, 'createCategory']);
-Route::post(`categories/{id}/edit`, [PostCategoryController::class, 'editCatById']);
+Route::get('categories/edit/{id}', [PostCategoryController::class, 'getCategoryById']);
 Route::get('categories/allCategories', [PostCategoryController::class, 'getAllCategories']);
+Route::post('categories/updateCategory/{id}', [PostCategoryController::class, 'updateCategory']);
 
 
 
