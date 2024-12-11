@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\PostCategoryController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -52,6 +53,10 @@ Route::get('categories/edit/{id}', [PostCategoryController::class, 'getCategoryB
 Route::get('categories/allCategories', [PostCategoryController::class, 'getAllCategories']);
 Route::post('categories/updateCategory/{id}', [PostCategoryController::class, 'updateCategory']);
 
+
+// Item routes
+Route::post('items/createItem', [ItemController::class , 'createItem']);
+Route::get('items/allItems', [ItemController::class, 'getAllItems']);
 
 
 require __DIR__.'/auth.php';

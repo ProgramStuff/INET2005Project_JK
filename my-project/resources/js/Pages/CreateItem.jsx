@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -22,7 +22,6 @@ const defaultTheme = createTheme({
 });
 
 export default function CreateItem() {
-//   const context = useOutletContext()
 
   // Manage state 
   const [category, setCategory] = useState(""); 
@@ -32,25 +31,52 @@ export default function CreateItem() {
   const [quantity, setQuantity] = useState("");
   const [sku, setSku] = useState("");
   const [picture, setPicture] = useState("");
-//   const navigate = useNavigate();
+  const [categoryId, setCategoryId] = useState("");
+  const [itemError, setItemError] = useState([]);
+  const [categoriesData, setCategoriesData] = useState([{"" : ""}]);
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    try {
-      // Hit server login end point
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, { email, password });
 
-      if (response.status === 200) {
-        console.log("Login successful");
-       !context.user && context.loginUser(response.data.id, response.data.usertitle, response.data.role);
-        navigate('/')
-      } else {
-        console.log("Unexpected response:", response);
-      }
-    } catch (error) {
-      console.error("Login failed:", error);
+
+async function handleSubmit(event) {
+
+  event.preventDefault();
+  try {
+    const response = await axios.post(`/items/createItem`, { 
+      title, 
+      description, 
+      price, 
+      quantity, 
+      sku, 
+      picture,
+      categoryId 
+    });
+    
+    if (response.status === 200) {
+      window.location='/items';
     }
+  } catch (error) {
+    if (error.status === 422){
+      setItemError(`Couldn't create item ${title}`);
+    }
+    console.error("Add category failed:", error);
   }
+}
+
+async function loadCategories() {
+  try {
+    const response = await axios.get(`/categories/allCategories`);
+    if (response.status === 200) {
+      setCategoriesData(response.data);
+      console.log(response.data);
+    }
+  } catch (error) {
+    console.error("Fetch categories failed:", error);
+  }
+}
+
+useEffect(() => {
+  loadCategories();
+}, [])
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -72,25 +98,34 @@ export default function CreateItem() {
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <FormHelperText sx={{ fontSize: '1rem' }}>Category</FormHelperText>
+
           <Select
                     labelId="category"
                     id="demo-simple-select"
                     value={category}
                     label="Role"
                     required
-                    onChange={(e) => setCategory(e.target.value)}
+                    onChange={(e) => {
+                      setCategoryId(categoriesData.find(cat => cat.name == e.target.value).id);
+                      setCategory(e.target.value)}}
+
                     sx={{ width: '100%' }}
                 >
-                    <MenuItem value={"t-shirt"}>T-Shirts</MenuItem>
-                    <MenuItem value={"pant"}>Pants</MenuItem>
-                    <MenuItem value={"jacket"}>Jacket</MenuItem>
+                            {categoriesData == "" ? null : 
+                            categoriesData.map((cat, index) =>{
+                              return(
+                                <MenuItem value={cat.name}>{cat.name}</MenuItem>
+                              )
+
+                            })
+                          }
                 </Select>
             <TextField
               margin="normal"
               required
               fullWidth
               id="title"
-              label="description title"
+              label="Item title"
               title="title"
               autoComplete="title"
               autoFocus
@@ -153,7 +188,9 @@ export default function CreateItem() {
               sx={{ mt: 3, mb: 2 }}
             >
               Create Item
-            </Button>      
+            </Button>     
+            {itemError && <p style={{ color: 'red', marginTop: '1rem' }}>{itemError}</p>}
+ 
           </Box>
         </Box>
         <Footer sx={{mt: {xs: 10, sm: 10, md: '27vh', lg: '27vh'}}} />

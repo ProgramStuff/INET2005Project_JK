@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -43,9 +43,6 @@ export default function CreateCategory() {
     }
   }
 
-  useEffect(() => {
-    loadCategories();
-  }, [])
 
   return (
     <ThemeProvider theme={defaultTheme}>
