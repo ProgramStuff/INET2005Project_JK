@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 // import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import { Link } from '@inertiajs/react';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { FormControlLabel, FormControl, RadioGroup, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Radio } from '@mui/material';
 import Grid from '@mui/material/Grid';
@@ -67,16 +68,6 @@ export default function Categories() {
   }, [])
 
 
-  
-  function handleChange(event) {
-    const [userid, role] = event.target.value.split(':'); // Split value into userid and role
-    setUserRole(prevState => ({
-      ...prevState,
-      userid: userid, // Update userid
-      role: role      // Update role
-    }));
-  }
-
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -132,8 +123,10 @@ export default function Categories() {
                             </TableCell>
                             <>              
                             <TableCell align="right">
-                                {/* Button will redirect to that category to edit */}
-                            <Button value={cat.id} onClick={(e) => window.location=`/categories/${cat.id}/edit`}>Edit</Button>
+                                {/* Button will redirect to category to edit */}
+                              <Link href={`/categories/${cat.id}/edit`}>
+                                <Button>Edit</Button>
+                              </Link>
                             </TableCell>
                             </>
             

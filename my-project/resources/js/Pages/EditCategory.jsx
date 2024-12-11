@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,6 +13,8 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Footer from '../components/Footer';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { usePage } from '@inertiajs/react';
 
 const defaultTheme = createTheme({
   palette: {
@@ -20,18 +22,38 @@ const defaultTheme = createTheme({
   },
 });
 
-export default function CreateCategory() {
+export default function EditCategory() {
+    const {categoryId} = usePage().props;
   // Manage state  
   const [name, setName] = useState("");
   const [catError, setCatError] = useState("");
 
+  const [category, setCategory] = useState([{"" : ""}]);
+    const [catId, setCatId] = useState(0);
+
+  async function loadCategoryData() {
+    try {
+      const response = await axios.get(`/categories/edit/${categoryId}`, { catId });
+      
+      if (response.status === 200) {
+        setCategory(response.data)
+        setCatId(response.data.id);
+        setName(response.data.name)
+      }
+    } catch (error) {
+      if (error.status === 422){
+        setCatError(`${name} category already exists`);
+      }
+      console.error("Add category failed:", error);
+    }
+  }
+  
 
   async function handleSubmit(event) {
     event.preventDefault();
     try {
-      const response = await axios.post(`catCreate`, { name });
+      const response = await axios.post(`/categories/updateCategory/${catId}`, { name });
       
-
       if (response.status === 200) {
         window.location='/categories';
       }
@@ -44,7 +66,7 @@ export default function CreateCategory() {
   }
 
   useEffect(() => {
-    loadCategories();
+    loadCategoryData();
   }, [])
 
   return (
@@ -63,7 +85,7 @@ export default function CreateCategory() {
             <AddCircleIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Add A Category
+            Edit Category
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
@@ -71,8 +93,9 @@ export default function CreateCategory() {
               required
               fullWidth
               id="name"
-              label="Category Name"
+
               name="name"
+              value={name}
               autoComplete="name"
               autoFocus
               onChange={(e) => setName(e.target.value)}
@@ -90,7 +113,7 @@ export default function CreateCategory() {
               Create
             </Button>
             {catError && <p style={{ color: 'red', marginTop: '1rem' }}>{catError}</p>}
-          
+            {console.log(category)}
           </Box>
         </Box>
         <Footer sx={{mt: {xs: 10, sm: 10, md: '27vh', lg: '27vh'}}} />

@@ -26,4 +26,26 @@ class PostCategoryController extends Controller
         return $allCategories; 
     }
 
+    public function getCategoryById($id){
+
+        $category = Category::findOrFail($id);
+        return $category;
+    }
+
+    public function updateCategory($id, Request $request){
+        $category = Category::findOrFail($id);
+
+
+        $incomingFields = $request->validate([
+            'name' => ['required', Rule::unique('categories', 'name')->ignore($id)]
+        ]);
+
+        $incomingFields['name'] = strip_tags($incomingFields['name']);
+
+        $category->update($incomingFields);
+
+        return redirect("/categories");
+    }
+
+
 }
