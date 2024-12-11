@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,7 +13,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Footer from '../components/Footer';
 import Paper from '@mui/material/Paper';
-import axios from 'axios';
+import axios, { all } from 'axios';
 
 const defaultTheme = createTheme({
   palette: {
@@ -23,12 +23,7 @@ const defaultTheme = createTheme({
 
 export default function Items() {
 
-  // Manage state  
-    const [items, setItems] = useState([]);
-    const allItems = [
-        { id: 1, category: "t-shirt", title: "Item One", description: "A brown shirt", price: 12.50, quantity: 100, sku: 123456789, picture: "https://breadandboxersusa.com/pub_images/original/634earth-brown-91.jpg?extend=copy&width=800&method=fit&height=1200&type=webp"},
-        { id: 2, category: "pant", title: "Item Two", description: "Blue Jeans", price: 24.00, quantity: 100, sku: 234567890, picture: "https://assets.burberry.com/is/image/Burberryltd/3F145B02-FE8C-4A7F-873A-67EAF16E3628?$BBY_V3_SL_1$&wid=1250&hei=1250"}
-    ];
+  const [itemData, setItemData] = useState([{"" : ""}]);
     
 
     // allItems.map((cat) => {
@@ -38,57 +33,74 @@ export default function Items() {
     //     });
     //   });
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    try {
-      // Hit server login end point
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, { email, password });
+  // async function handleSubmit(event) {
+  //   event.preventDefault();
+  //   try {
+  //     // Hit server login end point
+  //     const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, { email, password });
 
+  //     if (response.status === 200) {
+  //       console.log("Login successful");
+  //      !context.user && context.loginUser(response.data.id, response.data.userName, response.data.role);
+  //       navigate('/')
+  //     } else {
+  //       console.log("Unexpected response:", response);
+  //     }
+  //   } catch (error) {
+  //     console.error("Login failed:", error);
+  //   }
+  // }
+
+  // async function handleClick(event) {
+  //   // Send confirmed role to update endpoint
+  //   event.preventDefault();
+  //   const userid = userRole.userid
+  //   const role = userRole.role
+  //   try {
+  //     // Hit role insert end point
+  //     const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/role/update`, {userid: userid, role: role});
+  //     if (response.status === 200) {
+  //       console.log("Request successful");
+  //     } else {
+  //       console.log("Unexpected response:", response);
+  //     }
+  //   } catch (error) {
+  //     console.error("Request failed:", error);
+  //   }
+
+  // }
+
+  async function loadItems() {
+    try {
+      const response = await axios.get(`/items/allItems`);
       if (response.status === 200) {
-        console.log("Login successful");
-       !context.user && context.loginUser(response.data.id, response.data.userName, response.data.role);
-        navigate('/')
-      } else {
-        console.log("Unexpected response:", response);
+        setItemData(response.data);
+        console.log(response.data);
+        console.log(itemData)
       }
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Fetch categories failed:", error);
     }
   }
 
-  async function handleClick(event) {
-    // Send confirmed role to update endpoint
-    event.preventDefault();
-    const userid = userRole.userid
-    const role = userRole.role
-    try {
-      // Hit role insert end point
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/role/update`, {userid: userid, role: role});
-      if (response.status === 200) {
-        console.log("Request successful");
-      } else {
-        console.log("Unexpected response:", response);
-      }
-    } catch (error) {
-      console.error("Request failed:", error);
-    }
-
-  }
+  useEffect(() => {
+    loadItems();
+  }, [])
 
 
   
-  function handleChange(event) {
-    const [userid, role] = event.target.value.split(':'); // Split value into userid and role
-    setUserRole(prevState => ({
-      ...prevState,
-      userid: userid, // Update userid
-      role: role      // Update role
-    }));
-  }
+  // function handleChange(event) {
+  //   const [userid, role] = event.target.value.split(':'); // Split value into userid and role
+  //   setUserRole(prevState => ({
+  //     ...prevState,
+  //     userid: userid, // Update userid
+  //     role: role      // Update role
+  //   }));
+  // }
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" sx={{maxWidth: {md: '58rem'}}}>
+      <Container component="main" sx={{maxWidth: {md: '62rem'}}}>
         <CssBaseline />
         <Box
           sx={{
@@ -104,8 +116,7 @@ export default function Items() {
           <Typography component="h1" variant="h5">
             All Items
           </Typography>
-            {/* {allItems == "" ? null :  */}
-              <FormControl sx={{ width: '100%', mt: { xs: 3, sm: 4, md: 5 } }}>
+              <FormControl sx={{ width: '100%', mt: { xs: 3, sm: 4, md: 10 } }}>
                 <RadioGroup sx={{ padding: 0, margin: 0, width: '100%' }}>
                   <TableContainer sx={{
                     width: '100%',
@@ -130,8 +141,10 @@ export default function Items() {
                         </TableRow>
                       </TableHead>
                       <TableBody sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                        {/* Map though role and display them in a table with user names to confirm */}
-                         {allItems.map((item, index) => { 
+                        {/* Map though items and display them in a table with user names to confirm */}
+                        {itemData == "" ? null : 
+
+                         itemData.map((item, index) => { 
                              return(
                             <TableRow
                             key={item.id}
@@ -146,7 +159,7 @@ export default function Items() {
                             </TableCell>
 
                             <TableCell component="th" scope="row">
-                              {item.category}
+                              {item.categoryId}
                             </TableCell>
 
                             <TableCell component="th" scope="row">
@@ -190,9 +203,8 @@ export default function Items() {
                   </TableContainer>
                 </RadioGroup>
               </FormControl>
-            {/* } */}
           </Box>
-        <Footer sx={{mt: {xs: 10, sm: 10, md: '27vh', lg: '27vh'}}} />
+        <Footer sx={{mt: {xs: 10, sm: 10, md: '27vh', lg: '22vh'}}} />
       </Container>
     </ThemeProvider>
   );

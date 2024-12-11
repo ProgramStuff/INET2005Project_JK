@@ -27,29 +27,25 @@ export default function Categories() {
 
   // Manage state  
     const [categoriesData, setCategoriesData] = useState([{"" : ""}]);
-    const allCategories = [
-        { id: 1, title: "Category One" },
-        { id: 2, title: "Category Two" }
-    ];
   
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    try {
-      // Hit server login end point
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, { email, password });
+  // async function handleSubmit(event) {
+  //   event.preventDefault();
+  //   try {
+  //     // Hit server login end point
+  //     const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, { email, password });
 
-      if (response.status === 200) {
-        console.log("Login successful");
-       !context.user && context.loginUser(response.data.id, response.data.userName, response.data.role);
-        navigate('/')
-      } else {
-        console.log("Unexpected response:", response);
-      }
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
-  }
+  //     if (response.status === 200) {
+  //       console.log("Login successful");
+  //      !context.user && context.loginUser(response.data.id, response.data.userName, response.data.role);
+  //       navigate('/')
+  //     } else {
+  //       console.log("Unexpected response:", response);
+  //     }
+  //   } catch (error) {
+  //     console.error("Login failed:", error);
+  //   }
+  // }
   async function loadCategories() {
     try {
       const response = await axios.get(`categories/allCategories`);
