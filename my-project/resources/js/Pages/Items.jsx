@@ -15,6 +15,9 @@ import Footer from '../components/Footer';
 import Paper from '@mui/material/Paper';
 import axios, { all } from 'axios';
 import { Link } from '@inertiajs/react';
+import DrawerAppBar from '../components/DrawerAppBar';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+
 
 
 const defaultTheme = createTheme({
@@ -28,31 +31,6 @@ export default function Items() {
   const [itemData, setItemData] = useState([{"" : ""}]);
   const [itemDeleted, setItemDeleted] = useState(0);
     
-
-    // allItems.map((cat) => {
-    //     let newCat = {id: cat.id, title: cat.title}
-    //     setCategories(prevCats => {
-    //       return [...prevCats, newCat];
-    //     });
-    //   });
-
-  // async function handleSubmit(event) {
-  //   event.preventDefault();
-  //   try {
-  //     // Hit server login end point
-  //     const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, { email, password });
-
-  //     if (response.status === 200) {
-  //       console.log("Login successful");
-  //      !context.user && context.loginUser(response.data.id, response.data.userName, response.data.role);
-  //       navigate('/')
-  //     } else {
-  //       console.log("Unexpected response:", response);
-  //     }
-  //   } catch (error) {
-  //     console.error("Login failed:", error);
-  //   }
-  // }
 
   async function handleDelete(event) {
     const id = event.target.value;
@@ -84,20 +62,11 @@ export default function Items() {
   }, [itemDeleted])
 
 
-  
-  // function handleChange(event) {
-  //   const [userid, role] = event.target.value.split(':'); // Split value into userid and role
-  //   setUserRole(prevState => ({
-  //     ...prevState,
-  //     userid: userid, // Update userid
-  //     role: role      // Update role
-  //   }));
-  // }
-
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" sx={{maxWidth: {md: '62rem'}}}>
         <CssBaseline />
+        <DrawerAppBar/>
         <Box
           sx={{
             marginTop: {xs: 0, sm: 1, md: 8, lg: 8},
@@ -107,7 +76,7 @@ export default function Items() {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <AddCircleIcon />
+            <FormatListBulletedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             All Items
@@ -204,6 +173,17 @@ export default function Items() {
                   </TableContainer>
                 </RadioGroup>
               </FormControl>
+
+              <Link href='/items/create'>
+                        <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2, width: '30vh'}}
+            >
+              Add Item
+            </Button>
+            </Link>
           </Box>
         <Footer sx={{mt: {xs: 10, sm: 10, md: '27vh', lg: '22vh'}}} />
       </Container>

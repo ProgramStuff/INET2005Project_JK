@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\Item;
+use Illuminate\Support\Facades\File;
 
 class ItemController extends Controller
 {
@@ -15,17 +16,21 @@ class ItemController extends Controller
             'price' => 'required',
             'quantity' => 'required',
             'sku' => 'required',
-            'picture' => 'required',
+            'picture' => 'required|image|mimes:jpeg,png,jpg,gif,webp,avif|max:2048',
             'categoryId' => 'required',
         ]);
+
+        $imageName = time() . '.' . $request->file('picture')->getClientOriginalExtension();
+        $request->file('picture')->move(public_path('images'), $imageName);
+        $incomingFields['picture'] = 'images/' . $imageName;
 
         $incomingFields['title'] = strip_tags($incomingFields['title']);
         $incomingFields['description'] = strip_tags($incomingFields['description']);
         $incomingFields['price'] = strip_tags($incomingFields['price']);
         $incomingFields['quantity'] = strip_tags($incomingFields['quantity']);
         $incomingFields['sku'] = strip_tags($incomingFields['sku']);
-        $incomingFields['picture'] = strip_tags($incomingFields['picture']);
         $incomingFields['categoryId'] = strip_tags($incomingFields['categoryId']);
+
 
 
         Item::create($incomingFields);
@@ -44,6 +49,7 @@ class ItemController extends Controller
         $incomingFields['id'] = strip_tags($incomingFields['id']);
 
         $item = Item::find($incomingFields['id']);
+        File::delete($item['picture']);
 
         $item->delete();
 
@@ -59,18 +65,21 @@ class ItemController extends Controller
             'price' => 'required',
             'quantity' => 'required',
             'sku' => 'required',
-            'picture' => 'required',
+            'picture' => 'required|image|mimes:jpeg,png,jpg,gif,webp,avif|max:2048',
             'categoryId' => 'required',
         ]);
         
+        $imageName = time() . '.' . $request->file('picture')->getClientOriginalExtension();
+        $request->file('picture')->move(public_path('images'), $imageName);
+        $incomingFields['picture'] = 'images/' . $imageName;
 
         $incomingFields['title'] = strip_tags($incomingFields['title']);
         $incomingFields['description'] = strip_tags($incomingFields['description']);
         $incomingFields['price'] = strip_tags($incomingFields['price']);
         $incomingFields['quantity'] = strip_tags($incomingFields['quantity']);
         $incomingFields['sku'] = strip_tags($incomingFields['sku']);
-        $incomingFields['picture'] = strip_tags($incomingFields['picture']);
         $incomingFields['categoryId'] = strip_tags($incomingFields['categoryId']);
+        File::delete($item['picture']);
 
         $item->update($incomingFields);
 
