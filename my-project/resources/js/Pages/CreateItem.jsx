@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,12 +14,22 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Select, MenuItem, FormHelperText } from '@mui/material';
 import Footer from '../components/Footer';
 import axios from 'axios';
+import { FileUpload } from 'primereact/fileupload';
+import { Toast } from 'primereact/toast';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { styled } from '@mui/material/styles';
+import DrawerAppBar from '../components/DrawerAppBar';
+
+
+
 
 const defaultTheme = createTheme({
   palette: {
     mode: 'dark',
   },
 });
+
+
 
 export default function CreateItem() {
 
@@ -35,29 +45,47 @@ export default function CreateItem() {
   const [itemError, setItemError] = useState([]);
   const [categoriesData, setCategoriesData] = useState([{"" : ""}]);
 
+  const [selectedFile, setSelectedFile] = useState("");
+
+  function handleFileUpload(event) {
+    const file = event.target.files[0];
+    setSelectedFile(file);
+    setPicture(event.target.files.name);
+  };
+
+
 
 
 async function handleSubmit(event) {
 
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('description', description);
+  formData.append('price', price);
+  formData.append('quantity', quantity);
+  formData.append('sku', sku);
+  formData.append('picture', selectedFile);
+  formData.append('categoryId', categoryId);
+
   event.preventDefault();
   try {
-    const response = await axios.post(`/items/createItem`, { 
-      title, 
-      description, 
-      price, 
-      quantity, 
-      sku, 
-      picture,
-      categoryId 
-    });
+    const response = await axios.post(`/items/createItem`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+      });
     
     if (response.status === 200) {
       window.location='/items';
     }
   } catch (error) {
     if (error.status === 422){
-      setItemError(`Couldn't create item ${title}`);
-    }
+      setItemError(`All fields required`);
+      setPicture("");
+      setSelectedFile(null);
+      if (toast.current) {
+        toast.current.clear();
+      }    }
     console.error("Add category failed:", error);
   }
 }
@@ -82,6 +110,7 @@ useEffect(() => {
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        <DrawerAppBar/>
         <Box
           sx={{
             marginTop: {xs: 0, sm: 1, md: 8, lg: 8},
@@ -171,16 +200,21 @@ useEffect(() => {
               id="sku"
               onChange={(e) => setSku(e.target.value)}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              title="picture"
-              label="picture"
-              type="text"
-              id="picture"
-              onChange={(e) => setPicture(e.target.value)}
-            />
+
+            <Button
+                  component="label"
+                  role={undefined}
+                  variant="contained"
+                  tabIndex={-1}
+                  startIcon={<CloudUploadIcon />}
+                >
+                  <input
+                    type="file"
+                    onChange={handleFileUpload}
+                    multiple
+                  />
+                </Button>  
+
             <Button
               type="submit"
               fullWidth
@@ -189,6 +223,8 @@ useEffect(() => {
             >
               Create Item
             </Button>     
+  
+
             {itemError && <p style={{ color: 'red', marginTop: '1rem' }}>{itemError}</p>}
  
           </Box>

@@ -16,6 +16,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Footer from '../components/Footer';
 import Paper from '@mui/material/Paper';
 import axios from 'axios';
+import DrawerAppBar from '../components/DrawerAppBar';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+
 
 
 
@@ -31,23 +34,6 @@ export default function Categories() {
     const [categoriesData, setCategoriesData] = useState([{"" : ""}]);
   
 
-  // async function handleSubmit(event) {
-  //   event.preventDefault();
-  //   try {
-  //     // Hit server login end point
-  //     const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, { email, password });
-
-  //     if (response.status === 200) {
-  //       console.log("Login successful");
-  //      !context.user && context.loginUser(response.data.id, response.data.userName, response.data.role);
-  //       navigate('/')
-  //     } else {
-  //       console.log("Unexpected response:", response);
-  //     }
-  //   } catch (error) {
-  //     console.error("Login failed:", error);
-  //   }
-  // }
   async function loadCategories() {
     try {
       const response = await axios.get(`categories/allCategories`);
@@ -70,6 +56,7 @@ export default function Categories() {
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        <DrawerAppBar/>
         <Box
           sx={{
             marginTop: {xs: 0, sm: 1, md: 8, lg: 8},
@@ -79,7 +66,7 @@ export default function Categories() {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <AddCircleIcon />
+            <FormatListBulletedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             All Categories
@@ -99,7 +86,6 @@ export default function Categories() {
                       <TableHead sx={{ backgroundColor: 'black' }}>
                         <TableRow>
                           <TableCell>Category Name</TableCell>
-                          <TableCell align="right">Category ID</TableCell>
                           <TableCell align="right">Edit</TableCell>
                         </TableRow>
                       </TableHead>
@@ -115,10 +101,6 @@ export default function Categories() {
                               {cat.name}
                             </TableCell>
 
-                            <TableCell align="right">
-                                {/* Set the radio button selected as default */}
-                            <FormControlLabel value={`${cat.id}:${cat.name}`} control={<Radio sx={{display: 'none'}} />} label={cat.id}/>
-                            </TableCell>
                             <>              
                             <TableCell align="right">
                                 {/* Button will redirect to category to edit */}
@@ -137,6 +119,16 @@ export default function Categories() {
                 </RadioGroup>
               </FormControl>
             } 
+            <Link href='/categories/create'>
+                        <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2, width: '30vh'}}
+            >
+              Create Category
+            </Button>
+            </Link>
           </Box>
         <Footer sx={{mt: {xs: 10, sm: 10, md: '27vh', lg: '27vh'}}} />
       </Container>

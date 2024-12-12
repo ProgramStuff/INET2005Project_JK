@@ -15,6 +15,9 @@ import Footer from '../components/Footer';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { usePage } from '@inertiajs/react';
+import DrawerAppBar from '../components/DrawerAppBar';
+import EditIcon from '@mui/icons-material/Edit';
+
 
 const defaultTheme = createTheme({
   palette: {
@@ -73,6 +76,7 @@ export default function EditCategory() {
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        <DrawerAppBar/>
         <Box
           sx={{
             marginTop: {xs: 0, sm: 1, md: 8, lg: 8},
@@ -82,7 +86,7 @@ export default function EditCategory() {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <AddCircleIcon />
+            <EditIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Edit Category
@@ -110,7 +114,7 @@ export default function EditCategory() {
               sx={{ mt: 3, mb: 2 }}
               onClick={handleSubmit}
             >
-              Create
+              Confirm
             </Button>
             {catError && <p style={{ color: 'red', marginTop: '1rem' }}>{catError}</p>}
             {console.log(category)}

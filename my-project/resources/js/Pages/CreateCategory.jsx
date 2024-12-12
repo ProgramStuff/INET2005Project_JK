@@ -13,6 +13,9 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Footer from '../components/Footer';
 import axios from 'axios';
+import DrawerAppBar from '../components/DrawerAppBar';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+
 
 const defaultTheme = createTheme({
   palette: {
@@ -48,6 +51,7 @@ export default function CreateCategory() {
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        <DrawerAppBar/>
         <Box
           sx={{
             marginTop: {xs: 0, sm: 1, md: 8, lg: 8},

@@ -66,8 +66,8 @@ Route::post('categories/updateCategory/{id}', [PostCategoryController::class, 'u
 Route::post('items/createItem', [ItemController::class , 'createItem']);
 Route::get('items/allItems', [ItemController::class, 'getAllItems']);
 Route::post('items/deleteItem', [ItemController::class , 'softDeleteItem']);
-Route::get('categories/edit/{id}', [ItemController::class, 'getItemById']);
-Route::post('categories/updateCategory/{id}', [ItemController::class, 'updateItem']);
+Route::get('items/edit/{id}', [ItemController::class, 'getItemById']);
+Route::post('items/updateItem/{id}', [ItemController::class, 'updateItem']);
 
 
 require __DIR__.'/auth.php';
