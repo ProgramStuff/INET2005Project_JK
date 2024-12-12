@@ -7,15 +7,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
-
 // Categories
 
 Route::get('/categories', function () {
@@ -39,6 +30,10 @@ Route::get('/items/{id}/edit', function ($id) {
 Route::get('/items/create', function () {
     return Inertia::render('CreateItem');
 }); 
+
+Route::get('/', function () {
+    return Inertia::render('Items');
+});
 
 Route::get('/items', function () {
     return Inertia::render('Items');
